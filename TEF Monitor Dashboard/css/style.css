@@ -1,0 +1,353 @@
+:root {
+  color-scheme: dark;
+  --bg: #091018;
+  --surface: #101923;
+  --surface-2: #152231;
+  --surface-3: #1b2b3b;
+  --border: #263749;
+  --text: #e7eef7;
+  --muted: #91a3b6;
+  --muted-2: #607286;
+  --accent: #23b7d9;
+  --accent-2: #4d8dff;
+  --success: #32d583;
+  --warning: #fdb022;
+  --danger: #f04438;
+  --info: #53b1fd;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+  --radius: 8px;
+  --sidebar-width: 276px;
+  --sidebar-collapsed: 86px;
+  --topbar-height: 82px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #eef3f8;
+  --surface: #ffffff;
+  --surface-2: #f7fafc;
+  --surface-3: #e7eef5;
+  --border: #d4dee8;
+  --text: #132231;
+  --muted: #536579;
+  --muted-2: #7a8b9b;
+  --accent: #037fa3;
+  --accent-2: #1f64d8;
+  --success: #0b8754;
+  --warning: #b76e00;
+  --danger: #c0261d;
+  --info: #1769c2;
+  --shadow: 0 18px 45px rgba(30, 48, 68, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  letter-spacing: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: var(--sidebar-width) minmax(0, 1fr);
+  min-height: 100vh;
+  transition: grid-template-columns 0.2s ease;
+}
+
+.app-shell.is-collapsed {
+  grid-template-columns: var(--sidebar-collapsed) minmax(0, 1fr);
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  border-right: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 92%, #000 8%);
+  padding: 18px 14px;
+}
+
+.sidebar__top,
+.topbar__title,
+.topbar__actions,
+.sidebar__footer,
+.platform-status,
+.user-mini {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar__top {
+  gap: 12px;
+  min-height: 44px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.brand__mark,
+.avatar {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  background: #18435b;
+  color: #dff8ff;
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.brand__mark {
+  border: 1px solid rgba(35, 183, 217, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.brand__text {
+  white-space: nowrap;
+  font-weight: 800;
+  font-size: 0.92rem;
+  letter-spacing: 0;
+}
+
+.sidebar__nav {
+  display: grid;
+  gap: 6px;
+  margin-top: 26px;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 600;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.nav-link svg,
+.icon-button svg,
+.primary-button svg,
+.secondary-button svg,
+.text-button svg,
+.search-control svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nav-link:hover,
+.nav-link.is-active {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--text);
+}
+
+.nav-link.is-active {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.sidebar__footer {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.platform-status,
+.user-mini {
+  gap: 10px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+
+.platform-status strong,
+.user-mini strong {
+  display: block;
+  overflow: hidden;
+  color: var(--text);
+  font-size: 0.88rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caption,
+.user-mini span,
+.breadcrumb,
+.panel p,
+.view-toolbar p,
+.empty-state span {
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.main {
+  min-width: 0;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--topbar-height);
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.topbar__title {
+  gap: 12px;
+  min-width: 0;
+}
+
+.topbar h1,
+.view-toolbar h2,
+.panel h2,
+.modal h2 {
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.topbar h1 {
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+}
+
+.breadcrumb {
+  margin: 0 0 4px;
+}
+
+.topbar__actions {
+  position: relative;
+  gap: 10px;
+  min-width: 0;
+}
+
+.search-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(360px, 30vw);
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--muted);
+}
+
+.search-control input,
+.filter-grid input,
+.filter-grid select {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+}
+
+.search-control input::placeholder,
+.filter-grid input::placeholder {
+  color: var(--muted-2);
+}
+
+.content {
+  width: min(100%, 1520px);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.view {
+  display: none;
+}
+
+.view.is-active {
+  display: block;
+}
+
+.view-toolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.view-toolbar p,
+.panel p {
+  margin: 6px 0 0;
+}
+
+.mobile-overlay {
+  display: none;
+}
+
+.app-shell.is-collapsed .brand__text,
+.app-shell.is-collapsed .nav-link span,
+.app-shell.is-collapsed .platform-status div,
+.app-shell.is-collapsed .user-mini__meta,
+.app-shell.is-collapsed .sidebar__footer .icon-button {
+  display: none;
+}
+
+.app-shell.is-collapsed .sidebar {
+  align-items: center;
+}
+
+.app-shell.is-collapsed .sidebar__top,
+.app-shell.is-collapsed .sidebar__footer {
+  align-items: center;
+}
+
+.app-shell.is-collapsed .nav-link {
+  justify-content: center;
+  width: 48px;
+  padding: 0;
+}

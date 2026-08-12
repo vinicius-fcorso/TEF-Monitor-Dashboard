@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="TEF Monitor Dashboard - painel frontend para monitoramento simulado de transacoes TEF."
+    />
+    <title>TEF Monitor Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/dashboard.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" defer></script>
+    <script src="js/utils.js" defer></script>
+    <script src="js/data.js" defer></script>
+    <script src="js/charts.js" defer></script>
+    <script src="js/filters.js" defer></script>
+    <script src="js/transactions.js" defer></script>
+    <script src="js/terminals.js" defer></script>
+    <script src="js/incidents.js" defer></script>
+    <script src="js/logs.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell" id="appShell">
+      <aside class="sidebar" id="sidebar" aria-label="Menu principal">
+        <div class="sidebar__top">
+          <button class="icon-button sidebar__toggle" id="sidebarToggle" type="button" aria-label="Recolher menu">
+            <i data-lucide="panel-left-close"></i>
+          </button>
+          <a class="brand" href="#dashboard" data-route="dashboard" aria-label="TEF Monitor">
+            <span class="brand__mark">TM</span>
+            <span class="brand__text">TEF MONITOR</span>
+          </a>
+        </div>
+
+        <nav class="sidebar__nav">
+          <a class="nav-link is-active" href="#dashboard" data-route="dashboard">
+            <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+          </a>
+          <a class="nav-link" href="#transactions" data-route="transactions">
+            <i data-lucide="receipt-text"></i><span>Transacoes</span>
+          </a>
+          <a class="nav-link" href="#terminals" data-route="terminals">
+            <i data-lucide="monitor-dot"></i><span>Terminais</span>
+          </a>
+          <a class="nav-link" href="#incidents" data-route="incidents">
+            <i data-lucide="triangle-alert"></i><span>Incidentes</span>
+          </a>
+          <a class="nav-link" href="#reports" data-route="reports">
+            <i data-lucide="bar-chart-3"></i><span>Relatorios</span>
+          </a>
+          <a class="nav-link" href="#logs" data-route="logs">
+            <i data-lucide="terminal-square"></i><span>Logs</span>
+          </a>
+          <a class="nav-link" href="#settings" data-route="settings">
+            <i data-lucide="settings"></i><span>Configuracoes</span>
+          </a>
+        </nav>
+
+        <div class="sidebar__footer">
+          <div class="platform-status">
+            <span class="status-dot status-dot--online"></span>
+            <div>
+              <span class="caption">Status da plataforma</span>
+              <strong>Operacional</strong>
+            </div>
+          </div>
+          <div class="user-mini">
+            <div class="avatar" aria-hidden="true">RC</div>
+            <div class="user-mini__meta">
+              <strong>Vinicius Corso</strong>
+              <span>Suporte N3</span>
+            </div>
+            <button class="icon-button" type="button" aria-label="Sair">
+              <i data-lucide="log-out"></i>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="mobile-overlay" id="mobileOverlay"></div>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="topbar__title">
+            <button class="icon-button topbar__menu" id="mobileMenu" type="button" aria-label="Abrir menu">
+              <i data-lucide="menu"></i>
+            </button>
+            <div>
+              <p class="breadcrumb" id="breadcrumb">Operacoes / Dashboard</p>
+              <h1 id="pageTitle">Dashboard</h1>
+            </div>
+          </div>
+
+          <div class="topbar__actions">
+            <label class="search-control" for="globalSearch">
+              <i data-lucide="search"></i>
+              <input id="globalSearch" type="search" placeholder="Buscar NSU, terminal, loja..." autocomplete="off" />
+            </label>
+            <button class="status-pill" type="button">
+              <span class="status-dot status-dot--online"></span>
+              Sistema Online
+            </button>
+            <button class="icon-button notification-button" id="notificationButton" type="button" aria-label="Notificacoes">
+              <i data-lucide="bell"></i>
+              <span class="notification-count" id="notificationCount">3</span>
+            </button>
+            <button class="theme-toggle" id="themeToggle" type="button" aria-label="Alternar tema">
+              <i data-lucide="moon"></i>
+              <span>Dark</span>
+            </button>
+            <div class="avatar topbar__avatar" aria-hidden="true">RC</div>
+          </div>
+
+          <section class="notifications-panel" id="notificationsPanel" aria-label="Painel de notificacoes">
+            <div class="panel-header">
+              <h2>Notificacoes</h2>
+              <button class="text-button" id="markNotificationsRead" type="button">Marcar lidas</button>
+            </div>
+            <div class="notification-list" id="notificationList"></div>
+          </section>
+        </header>
+
+        <div class="content">
+          <section class="view is-active" id="view-dashboard" data-view="dashboard">
+            <div class="view-toolbar">
+              <div>
+                <h2>Visao operacional</h2>
+                <p>Monitoramento consolidado das autorizacoes TEF em ambiente simulado.</p>
+              </div>
+              <span class="last-update" id="lastUpdate"><span></span> Atualizado agora</span>
+            </div>
+
+            <div class="metrics-grid" id="metricsGrid"></div>
+
+            <div class="dashboard-grid">
+              <section class="panel panel--wide">
+                <div class="panel-header">
+                  <div>
+                    <h2>Transacoes por hora</h2>
+                    <p>Aprovadas, negadas e timeout no dia corrente.</p>
+                  </div>
+                </div>
+                <div class="chart-box"><canvas id="hourlyChart"></canvas></div>
+              </section>
+
+              <section class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Status das transacoes</h2>
+                    <p>Distribuicao por resultado.</p>
+                  </div>
+                </div>
+                <div class="chart-box chart-box--compact"><canvas id="statusChart"></canvas></div>
+              </section>
+
+              <section class="panel panel--wide">
+                <div class="panel-header">
+                  <div>
+                    <h2>Volume financeiro</h2>
+                    <p>Total transacionado nos ultimos 7 dias.</p>
+                  </div>
+                </div>
+                <div class="chart-box"><canvas id="volumeChart"></canvas></div>
+              </section>
+
+              <section class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Terminais criticos</h2>
+                    <p>Dispositivos com maior atencao operacional.</p>
+                  </div>
+                </div>
+                <div class="terminal-summary" id="terminalSummary"></div>
+              </section>
+            </div>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Ultimas transacoes</h2>
+                  <p>Eventos recentes de captura e autorizacao.</p>
+                </div>
+                <a class="text-button" href="#transactions" data-route="transactions">Ver todas</a>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table" aria-label="Ultimas transacoes">
+                  <thead>
+                    <tr>
+                      <th>NSU</th>
+                      <th>Data/Hora</th>
+                      <th>Terminal</th>
+                      <th>Estabelecimento</th>
+                      <th>Bandeira</th>
+                      <th>Tipo</th>
+                      <th>Valor</th>
+                      <th>Status</th>
+                      <th>Tempo</th>
+                      <th>Acoes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentTransactionsBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <section class="view" id="view-transactions" data-view="transactions">
+            <div class="view-toolbar">
+              <div>
+                <h2>Transacoes</h2>
+                <p>Consulta operacional com filtros combinados e busca em tempo real.</p>
+              </div>
+              <button class="primary-button" id="exportTransactions" type="button">
+                <i data-lucide="download"></i> Exportar CSV
+              </button>
+            </div>
+
+            <section class="filters-panel">
+              <div class="filter-grid">
+                <label>Status<select id="statusFilter"><option value="">Todos</option></select></label>
+                <label>Bandeira<select id="brandFilter"><option value="">Todas</option></select></label>
+                <label>Tipo<select id="typeFilter"><option value="">Todos</option></select></label>
+                <label>Terminal<select id="terminalFilter"><option value="">Todos</option></select></label>
+                <label>Data<input id="dateFilter" type="date" /></label>
+                <label>Valor minimo<input id="minValueFilter" type="number" min="0" step="0.01" placeholder="0,00" /></label>
+                <label>Valor maximo<input id="maxValueFilter" type="number" min="0" step="0.01" placeholder="999,99" /></label>
+                <label class="filter-grid__search">Busca<input id="transactionSearch" type="search" placeholder="NSU, terminal, loja ou bandeira" /></label>
+              </div>
+              <div class="filter-actions">
+                <button class="primary-button" id="applyFilters" type="button">
+                  <i data-lucide="filter"></i> Aplicar filtros
+                </button>
+                <button class="secondary-button" id="clearFilters" type="button">
+                  <i data-lucide="rotate-ccw"></i> Limpar filtros
+                </button>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-header">
+                <div>
+                  <h2>Resultado da consulta</h2>
+                  <p><span id="transactionsCount">0</span> registros encontrados.</p>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="data-table" aria-label="Transacoes">
+                  <thead>
+                    <tr>
+                      <th>NSU</th>
+                      <th>Data/Hora</th>
+                      <th>Terminal</th>
+                      <th>Estabelecimento</th>
+                      <th>Bandeira</th>
+                      <th>Tipo</th>
+                      <th>Valor</th>
+                      <th>Status</th>
+                      <th>Tempo</th>
+                      <th>Acoes</th>
+                    </tr>
+                  </thead>
+                  <tbody id="transactionsTableBody"></tbody>
+                </table>
+              </div>
+              <div class="empty-state" id="transactionsEmpty" hidden>
+                <i data-lucide="search-x"></i>
+                <strong>Nenhuma transacao encontrada</strong>
+                <span>Ajuste os filtros ou limpe a busca atual.</span>
+              </div>
+            </section>
+          </section>
+
+          <section class="view" id="view-terminals" data-view="terminals">
+            <div class="view-toolbar">
+              <div>
+                <h2>Terminais TEF</h2>
+                <p>Saude dos POS, ultima comunicacao e latencia por dispositivo.</p>
+              </div>
+            </div>
+            <div class="terminal-grid" id="terminalsGrid"></div>
+          </section>
+
+          <section class="view" id="view-incidents" data-view="incidents">
+            <div class="view-toolbar">
+              <div>
+                <h2>Incidentes</h2>
+                <p>Acompanhamento de eventos de suporte, sustentacao e SLA.</p>
+              </div>
+            </div>
+            <section class="panel">
+              <div class="table-wrap">
+                <table class="data-table" aria-label="Incidentes">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Severidade</th>
+                      <th>Servico</th>
+                      <th>Descricao</th>
+                      <th>Status</th>
+                      <th>Responsavel</th>
+                      <th>Abertura</th>
+                      <th>SLA</th>
+                    </tr>
+                  </thead>
+                  <tbody id="incidentsBody"></tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <section class="view" id="view-reports" data-view="reports">
+            <div class="view-toolbar">
+              <div>
+                <h2>Relatorios</h2>
+                <p>Indicadores executivos simulados para apresentacao operacional.</p>
+              </div>
+            </div>
+            <div class="report-grid" id="reportsGrid"></div>
+          </section>
+
+          <section class="view" id="view-logs" data-view="logs">
+            <div class="view-toolbar">
+              <div>
+                <h2>Logs tecnicos</h2>
+                <p>Eventos de observabilidade por servico, terminal e nivel.</p>
+              </div>
+              <div class="segmented-control" id="logLevelFilters" aria-label="Filtrar logs"></div>
+            </div>
+            <section class="logs-console" id="logsConsole" aria-label="Console de logs"></section>
+          </section>
+
+          <section class="view" id="view-settings" data-view="settings">
+            <div class="view-toolbar">
+              <div>
+                <h2>Configuracoes</h2>
+                <p>Preferencias locais e simulacao da estacao operacional.</p>
+              </div>
+            </div>
+            <section class="settings-grid">
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Tema</h2>
+                    <p>Preferencia salva no localStorage do navegador.</p>
+                  </div>
+                </div>
+                <button class="secondary-button" id="settingsThemeToggle" type="button">
+                  <i data-lucide="sun-moon"></i> Alternar dark/light
+                </button>
+              </div>
+              <div class="panel">
+                <div class="panel-header">
+                  <div>
+                    <h2>Simulacao</h2>
+                    <p>Novas transacoes e variacao dos terminais a cada ciclo.</p>
+                  </div>
+                </div>
+                <label class="switch-control">
+                  <input id="simulationToggle" type="checkbox" checked />
+                  <span></span>
+                  Simulacao em tempo real
+                </label>
+              </div>
+            </section>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="transactionModal" aria-hidden="true">
+      <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal__header">
+          <div>
+            <p class="breadcrumb">Detalhes da transacao</p>
+            <h2 id="modalTitle">NSU</h2>
+          </div>
+          <button class="icon-button" id="closeModal" type="button" aria-label="Fechar modal">
+            <i data-lucide="x"></i>
+          </button>
+        </div>
+        <div class="modal__body" id="modalBody"></div>
+      </section>
+    </div>
+  </body>
+</html>
