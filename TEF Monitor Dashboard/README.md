@@ -92,5 +92,5 @@ No backend, database or build step is required.
 Add your GitHub profile here:
 
 ```text
-https://github.com/your-username
+https://github.com/vinicius-fcorso
 ```
